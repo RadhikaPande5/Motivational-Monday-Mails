@@ -1,10 +1,30 @@
-name: Motivational Monday Mailer
+name: Monday Quote Mailer
 
 on:
+  schedule:
+    - cron: '30 3 * * MON'   # 9:00 AM IST every Monday
   workflow_dispatch:
 
 jobs:
-  test:
+  send-quote:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Workflow is working!"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install python-dotenv
+
+      - name: Run script
+        env:
+          MY_EMAIL: ${{ secrets.MY_EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: python main.py
